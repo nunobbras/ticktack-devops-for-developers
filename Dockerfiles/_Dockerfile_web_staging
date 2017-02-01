@@ -1,0 +1,45 @@
+#Prepare the Machine
+#FROM ubuntu:14.04
+FROM phusion/baseimage:0.9.17
+MAINTAINER Nuno B Bras <nuno.bras@2ndhanlder.com>
+
+RUN sudo apt-get update 
+RUN apt-get install -y tar \
+                   git \
+                   git-core\
+                   curl \
+                   nano \
+                   wget \
+                   dialog \
+                   net-tools \ 
+                   htop
+
+RUN sudo apt-get install -y build-essential
+
+
+# Prepare Python Env
+RUN apt-get install -y python2.7
+RUN apt-get install -y python-dev python-distribute python-pip
+#for postgres driver
+RUN apt-get install -y libpq-dev 
+
+
+ENV web/.env_staging
+
+# Get CodeBase
+RUN git clone https://${GIT_USER}:${GIT_PASS}@gitlab.com/nunobbras/2ndh_codebase.git
+
+WORKDIR /2ndh_codebase/web/restapi
+
+RUN echo redo
+RUN git pull
+
+RUN git checkout staging
+
+RUN	pip install -r requirements.txt
+
+RUN python manage.py makemigrations
+RUN python manage.py migrate
+
+
+

@@ -1,0 +1,67 @@
+#Deploy with
+#docker-compose -f devops/full_local_deploy.yml build
+#docker-compose -f devops/full_local_deploy.yml up -d
+
+
+web:
+  restart: always
+  build: Dockerfiles/.
+  dockerfile: Dockerfile_web_local_docker
+  expose:
+    - "8000"
+  dns:
+    - 8.8.8.8
+    - 8.8.4.4    
+  links:
+    - mysql:mysql
+  env_file:
+    - ../web/.env_local_docker 
+  volumes:
+    - ../web:/your_codebase/web/frontend/local
+  working_dir: /your_codebase/web/restapi  
+  command: gunicorn --reload wsgi:application -w 2 -b 0.0.0.0:8000 
+
+
+nginx:
+  restart: always
+  build: Dockerfiles/.
+  dockerfile: Dockerfile_nginx
+  ports:
+    - "80:80"
+  volumes:
+    - /www/stat #TESTE RETIRAR!!!
+  dns:
+    - 8.8.8.8
+    - 8.8.4.4      
+  volumes_from:
+    - web
+  links:
+    - web:web
+  command: nginx
+
+
+mysql:
+  restart: always
+  image: mysql:latest
+  ports:
+    - "3306:3306"
+  environment:
+    - MYSQL_ROOT_PASSWORD:???
+
+# data:
+#   restart: always
+#   image: postgres:latest
+#   volumes:
+#     - /var/lib/postgresql
+
+# postgres:
+#   restart: always
+#   build: ../postgres
+#   dockerfile: Dockerfile_postgres_local  
+#   ports:
+#     - "5432:5432"
+#   volumes:
+#     - /var/lib/postgresql    
+
+
+

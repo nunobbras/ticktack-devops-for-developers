@@ -1,0 +1,40 @@
+#Prepare the Machine
+#FROM ubuntu:14.04
+FROM phusion/baseimage:0.9.17
+MAINTAINER Nuno B Bras <nuno.bras@2ndhanlder.com>
+
+RUN sudo apt-get update 
+RUN apt-get install -y tar \
+                   git \
+                   git-core\
+                   curl \
+                   nano \
+                   wget \
+                   dialog \
+                   net-tools \ 
+                   htop
+
+
+
+RUN sudo apt-get install -y build-essential
+
+# Prepare Python Env
+
+RUN apt-get install -y python2.7
+RUN apt-get install -y python-dev python-distribute python-pip 
+
+#for mysql driver
+RUN sudo apt-get update 
+RUN apt-get install -y libmysqlclient-dev
+
+#for postgres driver
+#RUN apt-get install -y libpq-dev 
+
+WORKDIR /2ndh_codebase/web/restapi
+
+#RUN pip install --allow-external mysql-connector-python mysql-connector-python
+ADD web/requirements_local.txt ./requirements.txt
+RUN pip install -r requirements.txt
+
+
+

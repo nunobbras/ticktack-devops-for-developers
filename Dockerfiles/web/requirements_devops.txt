@@ -1,0 +1,8 @@
+DynectDNS==0.3
+ecdsa==0.13
+Fabric==1.10.2
+mysql-connector-python==2.0.4
+paramiko==1.15.2
+pycrypto==2.6.1
+gnureadline==6.3.3
+ipdb==0.10.1

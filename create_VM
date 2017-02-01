@@ -1,0 +1,24 @@
+
+#COMO Criar as maquinas no AZURE
+
+--> Abrir a port 80 no Azure!!!
+--> Alterar  azure-subscription-id com o id da subscription
+--> ir a https://manage.windowsazure.com/@nunobbrasualhotmail.onmicrosoft.com#Workspaces/AdminTasks/ListManagementCertificates
+(settings)
+e adicionar um certificado .cer (que existe em ~/.ssh ou em ~, ou então criar um a partir do .pem)
+
+correr 
+
+cd ~/.ssh && docker-machine create -d "azure" --azure-subscription-id="3d41a12b-ab55-4e80-98a8-d63a2c1370de" --azure-subscription-cert="azure.pem" --azure-location="North Europe" 2ndhandlerprodtick
+
+cd ~/.ssh && docker-machine create -d "azure" --azure-subscription-id="3d41a12b-ab55-4e80-98a8-d63a2c1370de" --azure-subscription-cert="azure.pem" 2ndhandlerdevtack
+
+-->Abrir a port 80 no Azure!!!
+
+
+#TODO: mudar para o docker local dessa maquina
+
+eval "$(docker-machine env 2ndhandlerDEV)"
+eval "$(docker-machine env 2ndhandlerPROD)"
+
+eval "$(boot2docker shellinit)"

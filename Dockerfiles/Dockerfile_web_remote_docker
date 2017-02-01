@@ -1,0 +1,59 @@
+#Prepare the Machine
+#FROM ubuntu:14.04
+FROM phusion/baseimage:0.9.17
+MAINTAINER Nuno B Bras <nuno.bras@2ndhanlder.com>
+
+RUN echo teste2
+RUN sudo apt-get update 
+RUN apt-get install -y tar \
+                   git \
+                   git-core\
+                   curl \
+                   nano \
+                   wget \
+                   dialog \
+                   net-tools \
+                   htop
+
+RUN sudo apt-get install -y build-essential
+
+# Prepare Python Env
+
+RUN apt-get install -y python2.7
+RUN apt-get install -y python-dev python-distribute python-pip
+
+#for postgres driver
+#RUN apt-get install -y libpq-dev 
+RUN apt-get install -y libmysqlclient-dev
+
+# Get CodeBase
+ADD certificate/id_rsa /root/.ssh/id_rsa
+
+# Create known_hosts
+RUN touch /root/.ssh/known_hosts
+
+# Add bitbuckets key
+RUN ssh-keyscan gitlab.com >> /root/.ssh/known_hosts
+
+RUN echo teste_
+RUN git clone -b starting_server git@gitlab.com:nunobbras/2ndh_codebase.git
+
+WORKDIR /2ndh_codebase/web/restapi
+
+#Use scipy
+RUN sudo apt-get update 
+RUN sudo apt-get install -y libblas-dev liblapack-dev libatlas-base-dev gfortran
+
+
+ADD web/requirements.txt ./requirements.txt
+RUN pip install -r requirements.txt
+
+ADD web/requirements_extra.txt ./requirements_extra.txt
+RUN pip install -r requirements_extra.txt
+
+#RUN pip install --allow-external mysql-connector-python mysql-connector-python
+
+
+
+#atenção as passwords...
+

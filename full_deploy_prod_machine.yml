@@ -1,0 +1,64 @@
+#Deploy with
+#docker-compose -f devops/full_dev_deploy.yml build
+#docker-compose -f devops/full_dev_deploy.yml up -d
+
+#[NBB] the yml defines the machine type: dev or prod (through the used .env_dev)
+
+web:
+# Para reconstruir do inicio
+  restart: always
+  build: Dockerfiles/.
+  dockerfile: Dockerfile_web_remote_docker
+# Para reconstruir com base na imagem 1
+  #image: devops_web
+  expose:
+    - "8000"
+  dns:
+    - 8.8.8.8
+    - 8.8.4.4    
+  # links:
+  #   - postgres:databseserver.c8owvxtnbvrk.us-west-1.rds.amazonaws.com
+  env_file:
+    - ../web/.env_prod
+  volumes:
+    - /your_codebase/web/frontend/static
+  working_dir: /your_codebase/web/restapi
+  command: gunicorn wsgi:application -w 2 -b 0.0.0.0:8000
+
+nginx:
+# Para reconstruir do inicio  
+  restart: always
+  build: Dockerfiles/.
+  dockerfile: Dockerfile_nginx
+# Para reconstruir com base na imagem 1 (so existe no tick...como por tb no tack?)
+#  image: devops_nginx:1  
+  ports:
+    - "80:80"
+  dns:
+    - 8.8.8.8
+    - 8.8.4.4    
+  volumes:
+    - /www/stat
+  volumes_from:
+    - web
+  links:
+    - web:web
+  command: nginx
+
+
+# postgres:
+#   restart: always
+#   image: postgres:latest
+#   volumes_from:
+#     - data
+#   ports:
+#     - "5432:5432"
+
+# data:
+#   restart: always
+#   image: postgres:latest
+#   volumes:
+#     - /var/lib/postgresql
+
+
+
